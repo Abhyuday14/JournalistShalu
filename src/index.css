@@ -1,0 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Crimson Text", serif;
+  --font-body: "Lora", serif;
+  --font-sans: "Inter", sans-serif;
+
+  --color-nature-green: #2D5016;
+  --color-sage-green: #A4C3A2;
+  --color-earth-brown: #8B7355;
+  --color-off-white: #F8F9F5;
+  --color-deep-charcoal: #2C3E2A;
+  --color-golden-yellow: #DAA520;
+}
+
+@layer base {
+  body {
+    @apply bg-off-white text-deep-charcoal font-body;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif text-nature-green;
+  }
+}
+
+.frosted-glass {
+  @apply bg-white/70 backdrop-blur-md border border-white/20;
+}
+
+.organic-card {
+  @apply rounded-2xl border border-sage-green/30 bg-white shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-1;
+}
+
+.nature-gradient {
+  @apply bg-gradient-to-br from-nature-green to-sage-green;
+}
