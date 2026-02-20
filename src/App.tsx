@@ -988,14 +988,26 @@ export default function App() {
   useEffect(() => {
     fetchData();
 
-    // Simple hash-based routing
+    // Simple hash-based routing + path-based fallback
     const handleHashChange = () => {
-      const hash = window.location.hash.replace('#', '') || 'home';
-      setView(hash);
+      const hash = window.location.hash.replace('#', '');
+      const path = window.location.pathname.replace('/', '');
+      
+      if (hash) {
+        setView(hash);
+      } else if (path && path.startsWith('admin')) {
+        setView(path);
+      } else {
+        setView('home');
+      }
     };
     window.addEventListener('hashchange', handleHashChange);
+    window.addEventListener('popstate', handleHashChange);
     handleHashChange();
-    return () => window.removeEventListener('hashchange', handleHashChange);
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+      window.removeEventListener('popstate', handleHashChange);
+    };
   }, []);
 
   const isAdminView = view.startsWith('admin');
