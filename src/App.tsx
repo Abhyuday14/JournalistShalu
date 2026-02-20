@@ -121,12 +121,15 @@ const Footer = () => (
         </div>
         <div>
           <h4 className="font-serif text-xl mb-4">Connect</h4>
-          <div className="flex space-x-4">
+          <div className="flex space-x-4 mb-6">
             <a href="#" className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors"><Twitter size={20} /></a>
             <a href="#" className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors"><Linkedin size={20} /></a>
             <a href="#" className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors"><Instagram size={20} /></a>
             <a href="#" className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors"><Mail size={20} /></a>
           </div>
+          <a href="#admin-dashboard" className="text-sage-green/40 hover:text-white text-xs uppercase tracking-widest font-bold flex items-center gap-2">
+            <User size={14} /> Admin Login
+          </a>
         </div>
       </div>
       <div className="mt-12 pt-8 border-t border-white/10 text-center text-sage-green/60 text-sm">
@@ -731,7 +734,7 @@ const AdminDashboard = ({ articles }: { articles: Article[] }) => {
       <div className="bg-white rounded-2xl border border-sage-green/20 shadow-sm overflow-hidden">
         <div className="p-6 border-b border-sage-green/10 flex justify-between items-center">
           <h2 className="text-xl font-serif font-bold">Recent Articles</h2>
-          <button className="text-nature-green font-bold text-sm">View All</button>
+          <a href="#admin-articles" className="text-nature-green font-bold text-sm">View All</a>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left">
@@ -766,10 +769,77 @@ const AdminDashboard = ({ articles }: { articles: Article[] }) => {
   );
 };
 
+const AdminArticles = ({ articles }: { articles: Article[] }) => (
+  <div className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <div className="flex justify-between items-center mb-8">
+      <h1 className="text-4xl font-serif font-bold">Manage Articles</h1>
+      <button className="px-6 py-2 nature-gradient text-white rounded-full font-bold">New Article</button>
+    </div>
+    <div className="bg-white rounded-2xl border border-sage-green/20 shadow-sm overflow-hidden">
+      <table className="w-full text-left">
+        <thead className="bg-off-white text-xs text-deep-charcoal/40 font-bold uppercase tracking-widest">
+          <tr>
+            <th className="px-6 py-4">Title</th>
+            <th className="px-6 py-4">Status</th>
+            <th className="px-6 py-4">Date</th>
+            <th className="px-6 py-4">Actions</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-sage-green/10">
+          {articles.map((article) => (
+            <tr key={article.id} className="hover:bg-off-white transition-colors">
+              <td className="px-6 py-4 font-medium">{article.title}</td>
+              <td className="px-6 py-4">
+                <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${article.status === 'published' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                  {article.status}
+                </span>
+              </td>
+              <td className="px-6 py-4 text-sm text-deep-charcoal/60">{new Date(article.publication_date).toLocaleDateString()}</td>
+              <td className="px-6 py-4">
+                <div className="flex gap-3">
+                  <button className="text-nature-green hover:underline font-bold text-sm">Edit</button>
+                  <button className="text-red-600 hover:underline font-bold text-sm">Delete</button>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+);
+
+const AdminMedia = () => (
+  <div className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <div className="flex justify-between items-center mb-8">
+      <h1 className="text-4xl font-serif font-bold">Media Library</h1>
+      <button className="px-6 py-2 nature-gradient text-white rounded-full font-bold">Upload Media</button>
+    </div>
+    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+      {[1, 2, 3, 4, 5, 6].map(i => (
+        <div key={i} className="aspect-square rounded-xl overflow-hidden border border-sage-green/20 group relative">
+          <img src={`https://picsum.photos/seed/${i}/400/400`} alt="Media" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+            <button className="text-white font-bold text-xs uppercase tracking-widest">Delete</button>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
 const AdminSettings = ({ profile, settings, onUpdate }: { profile: Profile | null, settings: Settings | null, onUpdate: () => void }) => {
   const [profData, setProfData] = useState(profile || { bio_short: '', bio_long: '', professional_title: '', contact_email: '', contact_phone: '', social_links: '{}' });
   const [settData, setSettData] = useState(settings || { site_title: '', site_tagline: '' });
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (profile) setProfData(profile);
+  }, [profile]);
+
+  useEffect(() => {
+    if (settings) setSettData(settings);
+  }, [settings]);
 
   const handleSave = async () => {
     setSaving(true);
@@ -946,6 +1016,8 @@ export default function App() {
       case 'about': return <AboutPage profile={profile} />;
       case 'contact': return <ContactPage profile={profile} />;
       case 'admin-dashboard': return <AdminDashboard articles={articles} />;
+      case 'admin-articles': return <AdminArticles articles={articles} />;
+      case 'admin-media': return <AdminMedia />;
       case 'admin-settings': return <AdminSettings profile={profile} settings={settings} onUpdate={fetchData} />;
       default: return <HomePage articles={articles} profile={profile} />;
     }
