@@ -7,6 +7,7 @@ import {
   LayoutDashboard, FileText, Image as ImageIcon, Settings as SettingsIcon, LogOut
 } from 'lucide-react';
 import { Article, Profile, Category, Settings } from './types';
+import { supabase } from './supabaseClient';
 
 // --- Components ---
 
@@ -127,9 +128,6 @@ const Footer = () => (
             <a href="#" className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors"><Instagram size={20} /></a>
             <a href="#" className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors"><Mail size={20} /></a>
           </div>
-          <a href="#admin-dashboard" className="text-sage-green/40 hover:text-white text-xs uppercase tracking-widest font-bold flex items-center gap-2">
-            <User size={14} /> Admin Login
-          </a>
         </div>
       </div>
       <div className="mt-12 pt-8 border-t border-white/10 text-center text-sage-green/60 text-sm">
@@ -645,23 +643,49 @@ const ArticleDetailPage = ({ slug, articles }: { slug: string, articles: Article
 // --- Admin Panel ---
 
 const AdminLogin = ({ onLogin }: { onLogin: (user: any) => void }) => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
+  const [isSignUp, setIsSignUp] = useState(false);
+
+  // Set your single admin email here
+  const ADMIN_EMAIL = 'shalusachdeva1920@gmail.com';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
+    setMessage('');
+    
+    if (email.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
+      setError('Access restricted to authorized admin only.');
+      return;
+    }
+
     try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
-      });
-      const data = await res.json();
-      if (data.success) onLogin(data.user);
-      else setError(data.message);
-    } catch (err) {
-      setError('Login failed');
+      if (isSignUp) {
+        const { data, error } = await supabase.auth.signUp({ email, password });
+        if (error) throw error;
+        
+        // Do NOT auto-login. If a session was created, sign out immediately.
+        if (data.session) {
+          await supabase.auth.signOut();
+        }
+        
+        // Redirect to Sign In page (switch view), keep email, clear password
+        setIsSignUp(false);
+        setPassword('');
+        setMessage('Registration successful! Check your email and confirm your account before logging in.');
+      } else {
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        if (data.session) {
+          onLogin(data.user);
+          window.location.hash = 'admin-dashboard';
+        }
+      }
+    } catch (err: any) {
+      setError(err.message || 'Authentication failed');
     }
   };
 
@@ -673,16 +697,21 @@ const AdminLogin = ({ onLogin }: { onLogin: (user: any) => void }) => {
         className="max-w-md w-full bg-white p-10 rounded-3xl shadow-xl border border-sage-green/20"
       >
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-serif font-bold text-nature-green">Admin Access</h1>
-          <p className="text-deep-charcoal/60">Manage your portfolio content</p>
+          <h1 className="text-3xl font-serif font-bold text-nature-green">
+            {isSignUp ? 'Create Admin Account' : 'Admin Access'}
+          </h1>
+          <p className="text-deep-charcoal/60">
+            {isSignUp ? 'Sign up to manage your portfolio' : 'Manage your portfolio content'}
+          </p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-bold text-deep-charcoal/60 mb-2 uppercase tracking-widest">Username</label>
+            <label className="block text-sm font-bold text-deep-charcoal/60 mb-2 uppercase tracking-widest">Email</label>
             <input 
-              type="text" 
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              type="email" 
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
               className="w-full px-4 py-3 rounded-xl border border-sage-green/30 focus:outline-none focus:ring-2 focus:ring-nature-green/20" 
             />
           </div>
@@ -692,14 +721,24 @@ const AdminLogin = ({ onLogin }: { onLogin: (user: any) => void }) => {
               type="password" 
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              required
               className="w-full px-4 py-3 rounded-xl border border-sage-green/30 focus:outline-none focus:ring-2 focus:ring-nature-green/20" 
             />
           </div>
           {error && <p className="text-red-600 text-sm text-center">{error}</p>}
+          {message && <p className="text-nature-green text-sm text-center font-medium">{message}</p>}
           <button type="submit" className="w-full py-4 nature-gradient text-white rounded-xl font-bold hover:shadow-lg transition-all">
-            Login
+            {isSignUp ? 'Sign Up' : 'Sign In'}
           </button>
         </form>
+        <div className="mt-6 text-center">
+          <button 
+            onClick={() => { setIsSignUp(!isSignUp); setError(''); setMessage(''); }} 
+            className="text-sm text-nature-green hover:underline font-medium"
+          >
+            {isSignUp ? 'Already have an account? Sign In' : 'Need an account? Sign Up'}
+          </button>
+        </div>
       </motion.div>
     </div>
   );
@@ -967,6 +1006,7 @@ export default function App() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [settings, setSettings] = useState<Settings | null>(null);
   const [user, setUser] = useState<any>(null);
+  const [authLoading, setAuthLoading] = useState(true);
 
   const fetchData = async () => {
     try {
@@ -988,6 +1028,18 @@ export default function App() {
   useEffect(() => {
     fetchData();
 
+    // Check active session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+      setAuthLoading(false);
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+      setAuthLoading(false);
+    });
+
     // Simple hash-based routing + path-based fallback
     const handleHashChange = () => {
       const hash = window.location.hash.replace('#', '');
@@ -995,7 +1047,7 @@ export default function App() {
       
       if (hash) {
         setView(hash);
-      } else if (path && path.startsWith('admin')) {
+      } else if (path && (path.startsWith('admin') || path === 'login')) {
         setView(path);
       } else {
         setView('home');
@@ -1007,12 +1059,26 @@ export default function App() {
     return () => {
       window.removeEventListener('hashchange', handleHashChange);
       window.removeEventListener('popstate', handleHashChange);
+      subscription.unsubscribe();
     };
   }, []);
+
+  if (authLoading) {
+    return <div className="min-h-screen flex items-center justify-center text-nature-green font-medium">Loading...</div>;
+  }
 
   const isAdminView = view.startsWith('admin');
 
   if (isAdminView && !user) {
+    window.location.hash = 'login';
+    return null;
+  }
+
+  if (view === 'login') {
+    if (user) {
+      window.location.hash = 'admin-dashboard';
+      return null;
+    }
     return <AdminLogin onLogin={setUser} />;
   }
 
@@ -1039,7 +1105,11 @@ export default function App() {
     <div className="min-h-screen flex flex-col">
       <Navbar 
         isAdmin={isAdminView} 
-        onLogout={() => { setUser(null); window.location.hash = 'home'; }} 
+        onLogout={async () => { 
+          await supabase.auth.signOut();
+          setUser(null); 
+          window.location.href = '/'; 
+        }} 
       />
       <main className="flex-grow">
         {renderView()}
