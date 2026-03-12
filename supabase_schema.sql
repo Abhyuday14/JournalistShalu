@@ -55,6 +55,7 @@ CREATE TABLE IF NOT EXISTS profile (
   profile_photo TEXT,
   contact_email TEXT,
   contact_phone TEXT,
+  contact_address TEXT,
   social_links JSONB DEFAULT '{}'::jsonb
 );
 
@@ -74,6 +75,55 @@ CREATE TABLE IF NOT EXISTS settings (
   key TEXT PRIMARY KEY,
   value TEXT
 );
+
+-- ROW LEVEL SECURITY (RLS) POLICIES
+
+-- Enable RLS on all tables
+ALTER TABLE articles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE categories ENABLE ROW LEVEL SECURITY;
+ALTER TABLE profile ENABLE ROW LEVEL SECURITY;
+ALTER TABLE settings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE contact_submissions ENABLE ROW LEVEL SECURITY;
+
+-- 1. Articles
+-- Public can read published articles
+CREATE POLICY "Public can view published articles" ON articles
+  FOR SELECT USING (status = 'published');
+-- Admin can do everything (insert, update, delete, read drafts)
+CREATE POLICY "Admin can do all on articles" ON articles
+  FOR ALL USING (auth.uid() IS NOT NULL);
+
+-- 2. Categories
+-- Public can read categories
+CREATE POLICY "Public can view categories" ON categories
+  FOR SELECT USING (true);
+-- Admin can do everything
+CREATE POLICY "Admin can do all on categories" ON categories
+  FOR ALL USING (auth.uid() IS NOT NULL);
+
+-- 3. Profile
+-- Public can read profile
+CREATE POLICY "Public can view profile" ON profile
+  FOR SELECT USING (true);
+-- Admin can do everything
+CREATE POLICY "Admin can do all on profile" ON profile
+  FOR ALL USING (auth.uid() IS NOT NULL);
+
+-- 4. Settings
+-- Public can read settings
+CREATE POLICY "Public can view settings" ON settings
+  FOR SELECT USING (true);
+-- Admin can do everything
+CREATE POLICY "Admin can do all on settings" ON settings
+  FOR ALL USING (auth.uid() IS NOT NULL);
+
+-- 5. Contact Submissions
+-- Public can insert new contact submissions
+CREATE POLICY "Public can insert contact submissions" ON contact_submissions
+  FOR INSERT WITH CHECK (true);
+-- Admin can read, update, delete submissions
+CREATE POLICY "Admin can do all on contact submissions" ON contact_submissions
+  FOR ALL USING (auth.uid() IS NOT NULL);
 
 -- Initial Seed Data (Optional)
 -- INSERT INTO users (username, email, password_hash, role) VALUES ('admin', 'shalu@example.com', 'admin123', 'admin');

@@ -23,7 +23,9 @@ export interface Profile {
   profile_photo: string;
   contact_email: string;
   contact_phone: string;
+  contact_address: string;
   social_links: string;
+  cv_file?: string;
 }
 
 export interface Category {
