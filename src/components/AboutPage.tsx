@@ -1,22 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { ExternalLink } from 'lucide-react';
-import { Profile } from '../types';
+import { Profile, Settings } from '../types';
 import { SignedImage } from './SignedImage';
 import { supabase } from '../supabaseClient';
 
-const AboutPage = ({ profile }: { profile: Profile | null }) => {
+const AboutPage = ({ profile, settings }: { profile: Profile | null, settings: Settings | null }) => {
   const [cvUrl, setCvUrl] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchCvUrl = async () => {
-      if (profile?.cv_file) {
-        if (profile.cv_file.startsWith('http')) {
-          setCvUrl(profile.cv_file);
+      if (settings?.cv_file) {
+        if (settings.cv_file.startsWith('http')) {
+          setCvUrl(settings.cv_file);
         } else {
           const { data, error } = await supabase.storage
             .from('app-files')
-            .createSignedUrl(profile.cv_file, 3600);
+            .createSignedUrl(settings.cv_file, 3600);
           if (!error && data) {
             setCvUrl(data.signedUrl);
           }
@@ -24,7 +24,7 @@ const AboutPage = ({ profile }: { profile: Profile | null }) => {
       }
     };
     fetchCvUrl();
-  }, [profile?.cv_file]);
+  }, [settings?.cv_file]);
 
   return (
   <div id="about" className="pt-32 pb-24">

@@ -4,8 +4,8 @@ import { supabase } from '../supabaseClient';
 import { SignedImage } from './SignedImage';
 
 const AdminSettings = ({ profile, settings, onUpdate, user }: { profile: Profile | null, settings: Settings | null, onUpdate: () => void, user: any }) => {
-  const [profData, setProfData] = useState(profile || { bio_short: '', bio_long: '', professional_title: '', contact_email: '', contact_phone: '', contact_address: '', social_links: '{}', profile_photo: '', cv_file: '' });
-  const [settData, setSettData] = useState(settings || { site_title: '', site_tagline: '' });
+  const [profData, setProfData] = useState(profile || { bio_short: '', bio_long: '', professional_title: '', profile_photo: '' });
+  const [settData, setSettData] = useState(settings || { site_title: '', site_tagline: '', contact_email: '', contact_phone: '', contact_address: '', social_links: '{}', cv_file: '' });
   const [saving, setSaving] = useState(false);
   const [notification, setNotification] = useState<{message: string, type: 'success' | 'error'} | null>(null);
 
@@ -32,12 +32,7 @@ const AdminSettings = ({ profile, settings, onUpdate, user }: { profile: Profile
           bio_short: profData.bio_short,
           bio_long: profData.bio_long,
           professional_title: profData.professional_title,
-          contact_email: profData.contact_email,
-          contact_phone: profData.contact_phone,
-          contact_address: profData.contact_address,
-          social_links: profData.social_links,
-          profile_photo: profData.profile_photo,
-          cv_file: profData.cv_file
+          profile_photo: profData.profile_photo
         })
         .eq('id', 1);
       
@@ -87,7 +82,7 @@ const AdminSettings = ({ profile, settings, onUpdate, user }: { profile: Profile
     if (error) {
       showNotification(`CV Upload failed: ${error.message}`, 'error');
     } else {
-      setProfData({ ...profData, cv_file: filePath });
+      setSettData({ ...settData, cv_file: filePath });
       showNotification('CV uploaded successfully', 'success');
     }
     setSaving(false);
@@ -154,8 +149,8 @@ const AdminSettings = ({ profile, settings, onUpdate, user }: { profile: Profile
               <div className="flex items-center gap-4">
                 <input 
                   type="text" 
-                  value={profData.cv_file || ''}
-                  onChange={(e) => setProfData({ ...profData, cv_file: e.target.value })}
+                  value={settData.cv_file || ''}
+                  onChange={(e) => setSettData({ ...settData, cv_file: e.target.value })}
                   className="flex-1 px-4 py-3 rounded-xl border border-sage-green/30 focus:outline-none focus:ring-2 focus:ring-nature-green/20" 
                   placeholder="URL or upload PDF..."
                 />
@@ -179,8 +174,8 @@ const AdminSettings = ({ profile, settings, onUpdate, user }: { profile: Profile
                 <label className="block text-sm font-bold text-deep-charcoal/60 mb-2 uppercase tracking-widest">Contact Email</label>
                 <input 
                   type="email" 
-                  value={profData.contact_email}
-                  onChange={(e) => setProfData({ ...profData, contact_email: e.target.value })}
+                  value={settData.contact_email || ''}
+                  onChange={(e) => setSettData({ ...settData, contact_email: e.target.value })}
                   className="w-full px-4 py-3 rounded-xl border border-sage-green/30 focus:outline-none focus:ring-2 focus:ring-nature-green/20" 
                 />
               </div>
@@ -188,8 +183,8 @@ const AdminSettings = ({ profile, settings, onUpdate, user }: { profile: Profile
                 <label className="block text-sm font-bold text-deep-charcoal/60 mb-2 uppercase tracking-widest">Contact Phone</label>
                 <input 
                   type="text" 
-                  value={profData.contact_phone}
-                  onChange={(e) => setProfData({ ...profData, contact_phone: e.target.value })}
+                  value={settData.contact_phone || ''}
+                  onChange={(e) => setSettData({ ...settData, contact_phone: e.target.value })}
                   className="w-full px-4 py-3 rounded-xl border border-sage-green/30 focus:outline-none focus:ring-2 focus:ring-nature-green/20" 
                 />
               </div>
@@ -197,8 +192,8 @@ const AdminSettings = ({ profile, settings, onUpdate, user }: { profile: Profile
                 <label className="block text-sm font-bold text-deep-charcoal/60 mb-2 uppercase tracking-widest">Contact Address</label>
                 <input 
                   type="text" 
-                  value={profData.contact_address || ''}
-                  onChange={(e) => setProfData({ ...profData, contact_address: e.target.value })}
+                  value={settData.contact_address || ''}
+                  onChange={(e) => setSettData({ ...settData, contact_address: e.target.value })}
                   className="w-full px-4 py-3 rounded-xl border border-sage-green/30 focus:outline-none focus:ring-2 focus:ring-nature-green/20" 
                 />
               </div>
@@ -230,7 +225,7 @@ const AdminSettings = ({ profile, settings, onUpdate, user }: { profile: Profile
             {['twitter', 'linkedin', 'instagram', 'github'].map((platform) => {
               let currentLinks = {};
               try {
-                currentLinks = JSON.parse(profData.social_links || '{}');
+                currentLinks = JSON.parse(settData.social_links || '{}');
               } catch (e) {}
               
               return (
@@ -241,7 +236,7 @@ const AdminSettings = ({ profile, settings, onUpdate, user }: { profile: Profile
                     value={currentLinks[platform as keyof typeof currentLinks] || ''}
                     onChange={(e) => {
                       const newLinks = { ...currentLinks, [platform]: e.target.value };
-                      setProfData({ ...profData, social_links: JSON.stringify(newLinks) });
+                      setSettData({ ...settData, social_links: JSON.stringify(newLinks) });
                     }}
                     className="w-full px-4 py-3 rounded-xl border border-sage-green/30 focus:outline-none focus:ring-2 focus:ring-nature-green/20" 
                     placeholder={`https://${platform}.com/...`}

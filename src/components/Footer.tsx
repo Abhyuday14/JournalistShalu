@@ -1,11 +1,11 @@
 import React from 'react';
 import { Twitter, Linkedin, Instagram, Mail, Github } from 'lucide-react';
-import { Profile } from '../types';
+import { Profile, Settings } from '../types';
 
-const Footer = ({ profile }: { profile: Profile | null }) => {
+const Footer = ({ profile, settings }: { profile: Profile | null, settings: Settings | null }) => {
   let socialLinks: any = {};
   try {
-    socialLinks = JSON.parse(profile?.social_links || '{}');
+    socialLinks = JSON.parse(settings?.social_links || '{}');
   } catch (e) {}
 
   return (
@@ -42,10 +42,10 @@ const Footer = ({ profile }: { profile: Profile | null }) => {
             {socialLinks.github && (
               <a href={socialLinks.github} target="_blank" rel="noopener noreferrer" className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors"><Github size={20} /></a>
             )}
-            {profile?.contact_email && (
-              <a href={`mailto:${profile.contact_email}`} className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors"><Mail size={20} /></a>
+            {settings?.contact_email && (
+              <a href={`mailto:${settings.contact_email}`} className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors"><Mail size={20} /></a>
             )}
-            {Object.keys(socialLinks).length === 0 && !profile?.contact_email && (
+            {Object.keys(socialLinks).length === 0 && !settings?.contact_email && (
               <p className="text-sage-green/80 text-sm">No social links added yet.</p>
             )}
           </div>

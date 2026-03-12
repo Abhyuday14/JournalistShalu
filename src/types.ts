@@ -21,11 +21,6 @@ export interface Profile {
   bio_long: string;
   professional_title: string;
   profile_photo: string;
-  contact_email: string;
-  contact_phone: string;
-  contact_address: string;
-  social_links: string;
-  cv_file?: string;
 }
 
 export interface Category {
@@ -37,6 +32,11 @@ export interface Category {
 }
 
 export interface Settings {
-  site_title: string;
-  site_tagline: string;
+  site_title?: string;
+  site_tagline?: string;
+  contact_email?: string;
+  contact_phone?: string;
+  contact_address?: string;
+  social_links?: string;
+  cv_file?: string;
 }

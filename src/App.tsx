@@ -133,8 +133,8 @@ export default function App() {
     switch (view) {
       case 'home': return <HomePage articles={articles} profile={profile} />;
       case 'portfolio': return <PortfolioPage articles={articles} categories={categories} />;
-      case 'about': return <AboutPage profile={profile} />;
-      case 'contact': return <ContactPage profile={profile} />;
+      case 'about': return <AboutPage profile={profile} settings={settings} />;
+      case 'contact': return <ContactPage profile={profile} settings={settings} />;
       case 'admin-dashboard': return <AdminDashboard articles={articles} />;
       case 'admin-articles': return <AdminArticles articles={articles} onRefresh={fetchData} user={user} />;
       case 'admin-media': return <AdminMedia user={user} />;
@@ -156,7 +156,7 @@ export default function App() {
       <main className="flex-grow">
         {renderView()}
       </main>
-      {!isAdminView && <Footer profile={profile} />}
+      {!isAdminView && <Footer profile={profile} settings={settings} />}
     </div>
   );
 }
