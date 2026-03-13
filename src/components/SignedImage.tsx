@@ -17,7 +17,8 @@ export const SignedImage = ({ src, alt, className }: { src: string, alt?: string
         setImgSrc(data.signedUrl);
       } else {
         console.error('Error fetching signed URL:', error);
-        setImgSrc(src); // fallback
+        const { data: publicData } = supabase.storage.from('app-files').getPublicUrl(src);
+        setImgSrc(publicData.publicUrl); // fallback
       }
     };
 

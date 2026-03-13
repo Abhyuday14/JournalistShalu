@@ -127,7 +127,7 @@ export default function App() {
   const renderView = () => {
     if (view.startsWith('article/')) {
       const slug = view.split('/')[1];
-      return <ArticleDetailPage slug={slug} articles={articles} />;
+      return <ArticleDetailPage slug={slug} articles={articles} profile={profile} />;
     }
 
     switch (view) {

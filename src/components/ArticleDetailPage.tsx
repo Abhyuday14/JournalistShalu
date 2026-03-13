@@ -1,10 +1,10 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { ArrowRight, ExternalLink } from 'lucide-react';
-import { Article } from '../types';
+import { Article, Profile } from '../types';
 import { SignedImage } from './SignedImage';
 
-const ArticleDetailPage = ({ slug, articles }: { slug: string, articles: Article[] }) => {
+const ArticleDetailPage = ({ slug, articles, profile }: { slug: string, articles: Article[], profile: Profile | null }) => {
   const article = articles.find(a => a.slug === slug);
   
   if (!article) return <div className="pt-32 text-center">Article not found</div>;
@@ -69,11 +69,15 @@ const ArticleDetailPage = ({ slug, articles }: { slug: string, articles: Article
 
           <div className="mt-16 pt-8 border-t border-sage-green/20 flex items-center gap-6">
             <div className="w-16 h-16 rounded-full overflow-hidden">
-              <img src="https://picsum.photos/seed/journalist/200/200" alt="Shalu Sachdeva" referrerPolicy="no-referrer" />
+              {profile?.profile_photo ? (
+                <SignedImage src={profile.profile_photo} alt={profile.professional_title || "Shalu Sachdeva"} className="w-full h-full object-cover" />
+              ) : (
+                <img src="https://picsum.photos/seed/journalist/200/200" alt="Shalu Sachdeva" referrerPolicy="no-referrer" className="w-full h-full object-cover" />
+              )}
             </div>
             <div>
               <p className="text-sm text-deep-charcoal/40 font-bold uppercase tracking-widest">Written By</p>
-              <p className="text-xl font-serif font-bold">Shalu Sachdeva</p>
+              <p className="text-xl font-serif font-bold">{profile?.professional_title || 'Shalu Sachdeva'}</p>
             </div>
           </div>
         </motion.div>

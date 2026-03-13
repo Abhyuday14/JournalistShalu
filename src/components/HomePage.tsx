@@ -11,7 +11,7 @@ const HomePage = ({ articles, profile }: { articles: Article[], profile: Profile
   return (
     <div id="home">
       {/* Hero Section */}
-      <section className="relative h-screen flex items-center overflow-hidden">
+      <section className="relative min-h-screen pt-32 pb-16 lg:pt-0 lg:pb-0 flex items-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img 
             src="https://picsum.photos/seed/nature/1920/1080" 
@@ -29,7 +29,7 @@ const HomePage = ({ articles, profile }: { articles: Article[], profile: Profile
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <h1 className="text-6xl md:text-8xl font-serif font-bold leading-tight mb-6">
+              <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif font-bold leading-tight mb-6">
                 Stories that <span className="text-sage-green italic">Breathe</span>
               </h1>
               <p className="text-xl text-deep-charcoal/80 mb-8 max-w-lg leading-relaxed">
