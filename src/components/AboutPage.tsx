@@ -19,6 +19,9 @@ const AboutPage = ({ profile, settings }: { profile: Profile | null, settings: S
             .createSignedUrl(settings.cv_file, 3600);
           if (!error && data) {
             setCvUrl(data.signedUrl);
+          } else {
+            const { data: publicData } = supabase.storage.from('app-files').getPublicUrl(settings.cv_file);
+            setCvUrl(publicData.publicUrl);
           }
         }
       }
