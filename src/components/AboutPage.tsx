@@ -43,7 +43,7 @@ const AboutPage = ({ profile, settings }: { profile: Profile | null, settings: S
                 <SignedImage src={profile.profile_photo} alt="Shalu Sachdeva" className="w-full h-auto" />
               ) : (
                 <img 
-                  src="https://picsum.photos/seed/about/800/1000" 
+                  src="WhatsApp Image 2026-03-13 at 21.45.51.jpeg" 
                   alt="Shalu Sachdeva" 
                   className="w-full h-auto"
                   referrerPolicy="no-referrer"
