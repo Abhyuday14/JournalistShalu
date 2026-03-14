@@ -127,5 +127,5 @@ CREATE POLICY "Admin can do all on contact submissions" ON contact_submissions
 
 -- Initial Seed Data (Optional)
 -- INSERT INTO users (username, email, password_hash, role) VALUES ('admin', 'shalu@example.com', 'admin123', 'admin');
--- INSERT INTO profile (user_id, bio_short, professional_title, contact_email, contact_phone) VALUES (1, 'Journalist covering social issues and environment.', 'Investigative Journalist', 'shalusachdeva1920@gmail.com', '+91 9982644844');
+-- INSERT INTO profile (user_id, bio_short, professional_title, contact_email, contact_phone) VALUES (1, 'Journalist covering social issues and environment.', 'Political Journalist', 'shalusachdeva1920@gmail.com', '+91 9982644844');
 -- INSERT INTO settings (key, value) VALUES ('site_title', 'Shalu Sachdeva'), ('site_tagline', 'Journalism with Purpose');

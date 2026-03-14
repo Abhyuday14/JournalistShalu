@@ -64,30 +64,12 @@ const AboutPage = ({ profile, settings }: { profile: Profile | null, settings: S
           <h2 className="text-5xl font-serif font-bold mb-6">About Shalu Sachdeva</h2>
           <div className="prose prose-lg text-deep-charcoal/80">
             <p className="mb-6 leading-relaxed">
-              {profile?.bio_long || "I am a dedicated investigative journalist with a passion for environmental justice and human rights. Over the past decade, I have reported from some of the most remote corners of the world, bringing to light stories of resilience and systemic change."}
+              {profile?.bio_long || "I am a dedicated Political Journalist with a passion for environmental justice and human rights. Over the past decade, I have reported from some of the most remote corners of the world, bringing to light stories of resilience and systemic change."}
             </p>
             <p className="mb-6 leading-relaxed">
               My work has been featured in major international publications, where I strive to combine rigorous research with compelling storytelling. I believe that journalism has the power to bridge divides and inspire action.
             </p>
-            <div className="grid grid-cols-2 gap-8 mt-12">
-              <div>
-                <h4 className="font-serif font-bold text-xl mb-2 text-nature-green">Expertise</h4>
-                <ul className="space-y-1 text-sm">
-                  <li>• Environmental Reporting</li>
-                  <li>• Social Justice</li>
-                  <li>• Investigative Features</li>
-                  <li>• Multimedia Storytelling</li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-serif font-bold text-xl mb-2 text-nature-green">Recognition</h4>
-                <ul className="space-y-1 text-sm">
-                  <li>• Press Freedom Award 2024</li>
-                  <li>• Green Journalism Grant</li>
-                  <li>• Excellence in Reporting</li>
-                </ul>
-              </div>
-            </div>
+
           </div>
           {cvUrl && (
             <div className="mt-12">

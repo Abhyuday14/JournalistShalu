@@ -51,7 +51,7 @@ export default function App() {
       setCategories(catData || []);
 
       // 3. Fetch Profile
-      const { data: profData } = await supabase.from('profile').select('*').eq('id', 1).single();
+      const { data: profData } = await supabase.from('profile').select('*').limit(1).maybeSingle();
       setProfile(profData || null);
 
       // 4. Fetch Settings

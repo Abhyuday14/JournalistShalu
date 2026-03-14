@@ -33,7 +33,7 @@ const HomePage = ({ articles, profile }: { articles: Article[], profile: Profile
                 Stories that <span className="text-sage-green italic">Breathe</span>
               </h1>
               <p className="text-xl text-deep-charcoal/80 mb-8 max-w-lg leading-relaxed">
-                {profile?.bio_short || "Investigative journalist uncovering the intersections of environment, society, and human resilience."}
+                {profile?.bio_short || "Political Journalist uncovering the intersections of environment, society, and human resilience."}
               </p>
               <div className="flex gap-4">
                 <a href="#portfolio" className="px-8 py-4 nature-gradient text-white rounded-full font-medium flex items-center gap-2 hover:shadow-lg transition-all">

@@ -4,8 +4,11 @@ import { supabase } from '../supabaseClient';
 import { SignedImage } from './SignedImage';
 
 const AdminSettings = ({ profile, settings, onUpdate, user }: { profile: Profile | null, settings: Settings | null, onUpdate: () => void, user: any }) => {
-  const [profData, setProfData] = useState(profile || { bio_short: '', bio_long: '', professional_title: '', profile_photo: '' });
-  const [settData, setSettData] = useState(settings || { site_title: '', site_tagline: '', contact_email: '', contact_phone: '', contact_address: '', social_links: '{}', cv_file: '' });
+  const defaultProfile = { bio_short: '', bio_long: '', professional_title: '', profile_photo: '' };
+  const defaultSettings = { site_title: '', site_tagline: '', contact_email: '', contact_phone: '', contact_address: '', social_links: '{}', cv_file: '' };
+
+  const [profData, setProfData] = useState({ ...defaultProfile, ...(profile || {}) });
+  const [settData, setSettData] = useState({ ...defaultSettings, ...(settings || {}) });
   const [saving, setSaving] = useState(false);
   const [notification, setNotification] = useState<{message: string, type: 'success' | 'error'} | null>(null);
 
@@ -15,33 +18,49 @@ const AdminSettings = ({ profile, settings, onUpdate, user }: { profile: Profile
   };
 
   useEffect(() => {
-    if (profile) setProfData(profile);
+    if (profile) setProfData(prev => ({ ...prev, ...profile }));
   }, [profile]);
 
   useEffect(() => {
-    if (settings) setSettData(settings);
+    if (settings) setSettData(prev => ({ ...prev, ...settings }));
   }, [settings]);
 
   const handleSave = async () => {
     setSaving(true);
     try {
       // Save Profile
-      const { error: profError } = await supabase
-        .from('profile')
-        .update({
-          bio_short: profData.bio_short,
-          bio_long: profData.bio_long,
-          professional_title: profData.professional_title,
-          profile_photo: profData.profile_photo
-        })
-        .eq('id', 1);
+      let profError;
+      if (profile?.id) {
+        const { error } = await supabase
+          .from('profile')
+          .update({
+            bio_short: profData.bio_short,
+            bio_long: profData.bio_long,
+            professional_title: profData.professional_title,
+            profile_photo: profData.profile_photo
+          })
+          .eq('id', profile.id);
+        profError = error;
+      } else {
+        const { error } = await supabase
+          .from('profile')
+          .insert({
+            user_id: user.id,
+            bio_short: profData.bio_short,
+            bio_long: profData.bio_long,
+            professional_title: profData.professional_title,
+            profile_photo: profData.profile_photo
+          });
+        profError = error;
+      }
       
       if (profError) throw profError;
 
       // Save Settings
-      const settingsPromises = Object.entries(settData).map(([key, value]) => 
-        supabase.from('settings').upsert({ key, value })
-      );
+      const settingsPromises = Object.entries(settData).map(async ([key, value]) => {
+        const { error } = await supabase.from('settings').upsert({ key, value }, { onConflict: 'key' });
+        if (error) throw error;
+      });
       await Promise.all(settingsPromises);
 
       onUpdate();
@@ -222,7 +241,7 @@ const AdminSettings = ({ profile, settings, onUpdate, user }: { profile: Profile
         <div className="bg-white p-8 rounded-3xl border border-sage-green/20 shadow-sm">
           <h2 className="text-2xl font-serif font-bold mb-6">Social Links</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {['twitter', 'linkedin', 'instagram', 'github'].map((platform) => {
+            {['twitter', 'linkedin', 'instagram', 'facebook'].map((platform) => {
               let currentLinks = {};
               try {
                 currentLinks = JSON.parse(settData.social_links || '{}');

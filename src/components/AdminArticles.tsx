@@ -25,6 +25,7 @@ const AdminArticles = ({ articles, onRefresh, user }: { articles: Article[], onR
       featured_image: '',
       status: 'draft',
       publication_date: new Date().toISOString(),
+      external_link: '',
       author_id: 1,
       views_count: 0,
     });

@@ -16,7 +16,7 @@ const Navbar = ({ isAdmin = false, onLogout }: { isAdmin?: boolean, onLogout?: (
     { name: 'Dashboard', href: '#admin-dashboard', icon: LayoutDashboard },
     { name: 'Articles', href: '#admin-articles', icon: FileText },
     { name: 'Media', href: '#admin-media', icon: ImageIcon },
-    { name: 'Settings', href: '#admin-settings', icon: SettingsIcon },
+    { name: 'About Page & Settings', href: '#admin-settings', icon: SettingsIcon },
   ] : [
     { name: 'Home', href: '#home' },
     { name: 'Portfolio', href: '#portfolio' },

@@ -1,12 +1,16 @@
 import React from 'react';
-import { Twitter, Linkedin, Instagram, Mail, Github } from 'lucide-react';
+import { Twitter, Linkedin, Instagram, Mail, Facebook } from 'lucide-react';
 import { Profile, Settings } from '../types';
 
 const Footer = ({ profile, settings }: { profile: Profile | null, settings: Settings | null }) => {
   let socialLinks: any = {};
   try {
-    socialLinks = JSON.parse(settings?.social_links || '{}');
-  } catch (e) {}
+    socialLinks = typeof settings?.social_links === 'string' 
+      ? JSON.parse(settings.social_links) 
+      : (settings?.social_links || {});
+  } catch (e) {
+    console.error("Failed to parse social links", e);
+  }
 
   return (
     <footer className="bg-nature-green text-off-white py-12">
@@ -15,7 +19,7 @@ const Footer = ({ profile, settings }: { profile: Profile | null, settings: Sett
         <div>
           <h3 className="text-2xl font-serif font-bold mb-4">{profile?.professional_title || 'Shalu Sachdeva'}</h3>
           <p className="text-sage-green/80 max-w-xs">
-            {profile?.bio_short || 'Investigative journalist dedicated to uncovering stories that matter.'}
+            {profile?.bio_short || 'Political Journalist dedicated to uncovering stories that matter.'}
           </p>
         </div>
         <div>
@@ -39,8 +43,8 @@ const Footer = ({ profile, settings }: { profile: Profile | null, settings: Sett
             {socialLinks.instagram && (
               <a href={socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors"><Instagram size={20} /></a>
             )}
-            {socialLinks.github && (
-              <a href={socialLinks.github} target="_blank" rel="noopener noreferrer" className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors"><Github size={20} /></a>
+            {socialLinks.facebook && (
+              <a href={socialLinks.facebook} target="_blank" rel="noopener noreferrer" className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors"><Facebook size={20} /></a>
             )}
             {settings?.contact_email && (
               <a href={`mailto:${settings.contact_email}`} className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors"><Mail size={20} /></a>

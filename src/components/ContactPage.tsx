@@ -17,7 +17,7 @@ const ContactPage = ({ profile, settings }: { profile: Profile | null, settings:
               <Mail size={32} />
             </div>
             <p className="text-sm text-deep-charcoal/40 font-bold uppercase tracking-widest mb-2">Email</p>
-            <p className="text-lg font-medium">{settings?.contact_email || 'hello@shalusachdeva.com'}</p>
+            <p className="text-lg font-medium">{settings?.contact_email !== undefined ? settings.contact_email : 'hello@shalusachdeva.com'}</p>
           </div>
           
           <div className="flex flex-col items-center p-8 bg-off-white rounded-3xl border border-sage-green/20 shadow-sm">
@@ -25,7 +25,7 @@ const ContactPage = ({ profile, settings }: { profile: Profile | null, settings:
               <Phone size={32} />
             </div>
             <p className="text-sm text-deep-charcoal/40 font-bold uppercase tracking-widest mb-2">Phone</p>
-            <p className="text-lg font-medium">{settings?.contact_phone || '+1 (555) 123-4567'}</p>
+            <p className="text-lg font-medium">{settings?.contact_phone !== undefined ? settings.contact_phone : '+1 (555) 123-4567'}</p>
           </div>
           
           <div className="flex flex-col items-center p-8 bg-off-white rounded-3xl border border-sage-green/20 shadow-sm">
@@ -33,7 +33,7 @@ const ContactPage = ({ profile, settings }: { profile: Profile | null, settings:
               <MapPin size={32} />
             </div>
             <p className="text-sm text-deep-charcoal/40 font-bold uppercase tracking-widest mb-2">Location</p>
-            <p className="text-lg font-medium text-center">{settings?.contact_address || 'New Delhi, India / Global'}</p>
+            <p className="text-lg font-medium text-center">{settings?.contact_address !== undefined ? settings.contact_address : 'New Delhi, India / Global'}</p>
           </div>
         </div>
       </div>

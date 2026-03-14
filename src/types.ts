@@ -39,4 +39,6 @@ export interface Settings {
   contact_address?: string;
   social_links?: string;
   cv_file?: string;
+  about_expertise?: string;
+  about_recognition?: string;
 }
